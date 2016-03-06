@@ -13,7 +13,10 @@ func main() {
 	var username string
 	fmt.Scan(&username)
 	fmt.Print("Password:")
-	pass := gopass.GetPasswd()
+	pass, err := gopass.GetPasswd()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Print("To: ")
 	var to string
@@ -21,8 +24,7 @@ func main() {
 
 	auth := smtp.PlainAuth("", username, string(pass), "smtp.gmail.com")
 	msg := []byte("Subject: This is the subject\nThis is the body")
-	err := smtp.SendMail("smtp.gmail.com:587", auth, "", []string{to}, msg)
-	if err != nil {
+	if err := smtp.SendMail("smtp.gmail.com:587", auth, "", []string{to}, msg); err != nil {
 		log.Fatal(err)
 	}
 }
